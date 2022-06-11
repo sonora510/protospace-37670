@@ -3,16 +3,11 @@ class PrototypesController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
 
   def index
-    @prototypes = Prototype.all
+    @prototypes = Prototype.includes(:user)
   end
 
   def new
-    if user_signe_in?
     @prototype = Prototype.new
-   else
-    redirect_to new_user_session_path
-   end
-
   end
 
   def create
