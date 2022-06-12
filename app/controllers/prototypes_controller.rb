@@ -1,7 +1,7 @@
 class PrototypesController < ApplicationController
   #before_action :set_prototype, except: [:index, :new, :create]
   #before_action :authenticate_user!, except: [:index, :show]
-  before_action :m_to_index, except: [:index,:new,:create,:show]
+  before_action :move_to_index, except: [:index,:new,:create,:show]
 
   def index
     @prototypes = Prototype.includes(:user)
@@ -20,8 +20,23 @@ class PrototypesController < ApplicationController
     end
   end
 
+  def edit
+    unless user_signed_in? && current_user.id == @prototype.user_id
+      redirect_to action: :index
+    end
+  end
+
   def show
     @prototype = Prototype.find(params[:id])
+  end
+
+  def update
+    prototype = Prototype.find(params[:id])
+    if prototype.update(prototype_params)
+      redirect_to action: :show
+    else
+        render :edit
+    end
   end
 
   private
@@ -30,7 +45,7 @@ class PrototypesController < ApplicationController
     params.require(:prototype).permit(:image, :title, :catch_copy, :concept).merge(user_id: current_user.id)
   end
 
-  def m_to_index
+  def move_to_index
     @prototype = Prototype.find(params[:id])
     # プロトタイプの投稿者とログインしているユーザーが同じであれば以下を表示する
     unless user_signed_in? && current_user.id == @prototype.user_id
