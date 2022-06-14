@@ -1,7 +1,7 @@
 class PrototypesController < ApplicationController
   #before_action :set_prototype, except: [:index, :new, :create]
-  #before_action :authenticate_user!, except: [:index, :show]
-  before_action :move_to_index, except: [:index,:new,:create,:show]
+  before_action :authenticate_user!, except: [:index, :show]
+  before_action :move_to_index, except: [:index,:new,:create,:show,]
 
   def index
     @prototypes = Prototype.includes(:user)
@@ -39,8 +39,14 @@ class PrototypesController < ApplicationController
     end
   end
 
-  private
+  def destroy
+    prototype = Prototype.find(params[:id])
+    prototype.destroy
+    redirect_to action: :index
+  end
 
+
+  private
   def prototype_params
     params.require(:prototype).permit(:image, :title, :catch_copy, :concept).merge(user_id: current_user.id)
   end
