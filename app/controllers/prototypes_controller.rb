@@ -21,7 +21,7 @@ class PrototypesController < ApplicationController
   end
 
   def edit
-    binding.pry
+    #binding.pry
     unless user_signed_in? && current_user.id == @prototype.user_id
       redirect_to action: :index
     end
